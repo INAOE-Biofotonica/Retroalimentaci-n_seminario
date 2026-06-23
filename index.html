@@ -219,6 +219,9 @@
         <label for="nombre">Nombre completo</label>
         <input type="text" id="nombre" name="nombre">
 
+        <label for="ponente">Nombre del presentador o presentadora</label>
+        <input type="text" id="ponente" name="ponente" required>
+        
         <h2 class="section-title">Evaluación del seminario</h2>
 
         <label for="claridad">¿Qué tan claro fue el seminario?</label>
@@ -301,6 +304,7 @@
 
       const data = {
         nombre: formData.get("nombre"),
+        ponente: formData.get("ponente"),
         claridad: formData.get("claridad"),
         interes: formData.get("interes"),
         utilidad: formData.get("utilidad"),
