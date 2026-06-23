@@ -1,119 +1,334 @@
-<section class="form-section">
-  <h2>Retroalimentación de Seminarios</h2>
-  <p>
-    Ayúdanos a mejorar los seminarios del Grupo de Biofotónica.
-    Tus comentarios, preguntas y sugerencias serán muy valiosos.
-  </p>
-
-  <form id="feedbackForm">
-    <h3>Datos básicos</h3>
-
-    <label>Nombre completo</label>
-    <input type="text" name="nombre">
-
-    <h3>Evaluación del seminario</h3>
-
-    <label>¿Qué tan claro fue el seminario?</label>
-    <select name="claridad" required>
-      <option value="">Selecciona una opción</option>
-      <option>Nada claro</option>
-      <option>Claro</option>
-      <option>Muy claro</option>
-    </select>
-
-    <label>¿Qué tan interesante fue el tema?</label>
-    <select name="interes" required>
-      <option value="">Selecciona una opción</option>
-      <option>Nada interesante</option>
-      <option>Interesante</option>
-      <option>Muy interesante</option>
-    </select>
-
-    <label>¿Qué tan útil fue para tu formación o trabajo?</label>
-    <select name="utilidad" required>
-      <option value="">Selecciona una opción</option>
-      <option>Nada útil</option>
-      <option>Útil</option>
-      <option>Muy útil</option>
-    </select>
-
-    <label>¿El nivel fue adecuado?</label>
-    <select name="nivel" required>
-      <option value="">Selecciona una opción</option>
-      <option>Muy básico</option>
-      <option>Adecuado</option>
-      <option>Muy avanzado</option>
-    </select>
-
-    <h3>Preguntas y retroalimentación</h3>
-
-    <label>¿Qué pregunta te gustaría hacer al ponente?</label>
-    <textarea name="pregunta"></textarea>
-
-    <label>¿Qué sugerencia le darías al ponente?</label>
-    <textarea name="sugerencia"></textarea>
-
-    <label>¿Qué fue lo que más te gustó del seminario?</label>
-    <textarea name="positivo"></textarea>
-
-    <label>¿Qué podría mejorarse?</label>
-    <textarea name="mejora"></textarea>
-
-    <button type="submit">Enviar retroalimentación</button>
-  </form>
-
-  <p id="successMessage" style="display:none;">
-    Retroalimentación enviada correctamente. ¡Gracias por participar!
-  </p>
-
-  <p id="errorMessage" style="display:none;">
-    Ocurrió un error al enviar el formulario. Intenta nuevamente.
-  </p>
-</section>
-
-<script>
-  const SCRIPT_URL = "PEGA_AQUI_LA_URL_DE_TU_WEB_APP";
-
-  const form = document.getElementById("feedbackForm");
-  const successMessage = document.getElementById("successMessage");
-  const errorMessage = document.getElementById("errorMessage");
-
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    successMessage.style.display = "none";
-    errorMessage.style.display = "none";
-
-    const formData = new FormData(form);
-
-    const data = {
-      nombre: formData.get("nombre"),
-      claridad: formData.get("claridad"),
-      interes: formData.get("interes"),
-      utilidad: formData.get("utilidad"),
-      nivel: formData.get("nivel"),
-      pregunta: formData.get("pregunta"),
-      sugerencia: formData.get("sugerencia"),
-      positivo: formData.get("positivo"),
-      mejora: formData.get("mejora")
-    };
-
-    try {
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain;charset=utf-8"
-        },
-        body: JSON.stringify(data)
-      });
-
-      form.reset();
-      successMessage.style.display = "block";
-
-    } catch (error) {
-      console.error("Error:", error);
-      errorMessage.style.display = "block";
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retroalimentación de Seminarios | Biofotónica INAOE</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
-  });
-</script>
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #eaf4ff, #fdfdff);
+      color: #1f2d3d;
+      position: relative;
+      overflow-x: hidden;
+      padding: 40px 20px;
+    }
+
+    /* Logos de fondo */
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      background-repeat: no-repeat;
+      background-size: contain;
+      opacity: 0.08;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::before {
+      top: 30px;
+      left: 20px;
+      width: 280px;
+      height: 280px;
+      background-image: url("img/logo biofotonica.jpg");
+    }
+
+    body::after {
+      bottom: 20px;
+      right: 20px;
+      width: 240px;
+      height: 240px;
+      background-image: url("img/logo inaoe.png");
+    }
+
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      font-size: 2.2rem;
+      color: #103d8c;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #44546a;
+    }
+
+    .form-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 22px;
+      box-shadow: 0 12px 35px rgba(16, 61, 140, 0.12);
+      padding: 35px;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      color: #103d8c;
+      margin: 28px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #d9e7ff;
+    }
+
+    .section-title:first-of-type {
+      margin-top: 0;
+    }
+
+    label {
+      display: block;
+      margin: 16px 0 8px;
+      font-weight: 600;
+      color: #23395d;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #cfdcf2;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #fbfdff;
+      transition: 0.25s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #3a7bd5;
+      box-shadow: 0 0 0 4px rgba(58, 123, 213, 0.12);
+      background: #ffffff;
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .btn-submit {
+      margin-top: 24px;
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 15px 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(90deg, #103d8c, #2d74da);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 20px rgba(45, 116, 218, 0.25);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(45, 116, 218, 0.3);
+    }
+
+    .message {
+      display: none;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+
+    .success {
+      background: #eafaf0;
+      color: #18794e;
+      border: 1px solid #b7e4c7;
+    }
+
+    .error {
+      background: #fff1f2;
+      color: #b42318;
+      border: 1px solid #fecdd3;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #5b6b82;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 24px 14px;
+      }
+
+      .form-card {
+        padding: 22px;
+      }
+
+      .hero h1 {
+        font-size: 1.7rem;
+      }
+
+      body::before {
+        width: 180px;
+        height: 180px;
+      }
+
+      body::after {
+        width: 160px;
+        height: 160px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <section class="hero">
+      <h1>Retroalimentación de Seminarios</h1>
+      <p>
+        Ayúdanos a mejorar los seminarios del Grupo de Biofotónica.
+        Tus comentarios, preguntas y sugerencias serán muy valiosos para seguir
+        fortaleciendo este espacio académico.
+      </p>
+    </section>
+
+    <section class="form-card">
+      <form id="feedbackForm">
+        <h2 class="section-title">Datos básicos</h2>
+
+        <label for="nombre">Nombre completo</label>
+        <input type="text" id="nombre" name="nombre">
+
+        <h2 class="section-title">Evaluación del seminario</h2>
+
+        <label for="claridad">¿Qué tan claro fue el seminario?</label>
+        <select id="claridad" name="claridad" required>
+          <option value="">Selecciona una opción</option>
+          <option>Nada claro</option>
+          <option>Claro</option>
+          <option>Muy claro</option>
+        </select>
+
+        <label for="interes">¿Qué tan interesante fue el tema?</label>
+        <select id="interes" name="interes" required>
+          <option value="">Selecciona una opción</option>
+          <option>Nada interesante</option>
+          <option>Interesante</option>
+          <option>Muy interesante</option>
+        </select>
+
+        <label for="utilidad">¿Qué tan útil fue para tu formación o trabajo?</label>
+        <select id="utilidad" name="utilidad" required>
+          <option value="">Selecciona una opción</option>
+          <option>Nada útil</option>
+          <option>Útil</option>
+          <option>Muy útil</option>
+        </select>
+
+        <label for="nivel">¿El nivel fue adecuado?</label>
+        <select id="nivel" name="nivel" required>
+          <option value="">Selecciona una opción</option>
+          <option>Muy básico</option>
+          <option>Adecuado</option>
+          <option>Muy avanzado</option>
+        </select>
+
+        <h2 class="section-title">Preguntas y retroalimentación</h2>
+
+        <label for="pregunta">¿Qué pregunta te gustaría hacer al ponente?</label>
+        <textarea id="pregunta" name="pregunta"></textarea>
+
+        <label for="sugerencia">¿Qué sugerencia le darías al ponente?</label>
+        <textarea id="sugerencia" name="sugerencia"></textarea>
+
+        <label for="positivo">¿Qué fue lo que más te gustó del seminario?</label>
+        <textarea id="positivo" name="positivo"></textarea>
+
+        <label for="mejora">¿Qué podría mejorarse?</label>
+        <textarea id="mejora" name="mejora"></textarea>
+
+        <button type="submit" class="btn-submit">Enviar retroalimentación</button>
+      </form>
+
+      <p id="successMessage" class="message success">
+        Retroalimentación enviada correctamente. ¡Gracias por participar!
+      </p>
+
+      <p id="errorMessage" class="message error">
+        Ocurrió un error al enviar el formulario. Intenta nuevamente.
+      </p>
+    </section>
+
+    <p class="footer-note">
+      Grupo de Biofotónica · INAOE
+    </p>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxMCCLnIMCHw2V11L2ZEUZbxDXuKJw87k-5JXjVD9yzrlQ0UyKkqAUlTgjM-jHziCfygQ/exec";
+
+    const form = document.getElementById("feedbackForm");
+    const successMessage = document.getElementById("successMessage");
+    const errorMessage = document.getElementById("errorMessage");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      successMessage.style.display = "none";
+      errorMessage.style.display = "none";
+
+      const formData = new FormData(form);
+
+      const data = {
+        nombre: formData.get("nombre"),
+        claridad: formData.get("claridad"),
+        interes: formData.get("interes"),
+        utilidad: formData.get("utilidad"),
+        nivel: formData.get("nivel"),
+        pregunta: formData.get("pregunta"),
+        sugerencia: formData.get("sugerencia"),
+        positivo: formData.get("positivo"),
+        mejora: formData.get("mejora")
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(data)
+        });
+
+        form.reset();
+        successMessage.style.display = "block";
+
+      } catch (error) {
+        console.error("Error:", error);
+        errorMessage.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
