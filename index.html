@@ -1,0 +1,119 @@
+<section class="form-section">
+  <h2>Retroalimentación de Seminarios</h2>
+  <p>
+    Ayúdanos a mejorar los seminarios del Grupo de Biofotónica.
+    Tus comentarios, preguntas y sugerencias serán muy valiosos.
+  </p>
+
+  <form id="feedbackForm">
+    <h3>Datos básicos</h3>
+
+    <label>Nombre completo</label>
+    <input type="text" name="nombre">
+
+    <h3>Evaluación del seminario</h3>
+
+    <label>¿Qué tan claro fue el seminario?</label>
+    <select name="claridad" required>
+      <option value="">Selecciona una opción</option>
+      <option>Nada claro</option>
+      <option>Claro</option>
+      <option>Muy claro</option>
+    </select>
+
+    <label>¿Qué tan interesante fue el tema?</label>
+    <select name="interes" required>
+      <option value="">Selecciona una opción</option>
+      <option>Nada interesante</option>
+      <option>Interesante</option>
+      <option>Muy interesante</option>
+    </select>
+
+    <label>¿Qué tan útil fue para tu formación o trabajo?</label>
+    <select name="utilidad" required>
+      <option value="">Selecciona una opción</option>
+      <option>Nada útil</option>
+      <option>Útil</option>
+      <option>Muy útil</option>
+    </select>
+
+    <label>¿El nivel fue adecuado?</label>
+    <select name="nivel" required>
+      <option value="">Selecciona una opción</option>
+      <option>Muy básico</option>
+      <option>Adecuado</option>
+      <option>Muy avanzado</option>
+    </select>
+
+    <h3>Preguntas y retroalimentación</h3>
+
+    <label>¿Qué pregunta te gustaría hacer al ponente?</label>
+    <textarea name="pregunta"></textarea>
+
+    <label>¿Qué sugerencia le darías al ponente?</label>
+    <textarea name="sugerencia"></textarea>
+
+    <label>¿Qué fue lo que más te gustó del seminario?</label>
+    <textarea name="positivo"></textarea>
+
+    <label>¿Qué podría mejorarse?</label>
+    <textarea name="mejora"></textarea>
+
+    <button type="submit">Enviar retroalimentación</button>
+  </form>
+
+  <p id="successMessage" style="display:none;">
+    Retroalimentación enviada correctamente. ¡Gracias por participar!
+  </p>
+
+  <p id="errorMessage" style="display:none;">
+    Ocurrió un error al enviar el formulario. Intenta nuevamente.
+  </p>
+</section>
+
+<script>
+  const SCRIPT_URL = "PEGA_AQUI_LA_URL_DE_TU_WEB_APP";
+
+  const form = document.getElementById("feedbackForm");
+  const successMessage = document.getElementById("successMessage");
+  const errorMessage = document.getElementById("errorMessage");
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    successMessage.style.display = "none";
+    errorMessage.style.display = "none";
+
+    const formData = new FormData(form);
+
+    const data = {
+      nombre: formData.get("nombre"),
+      claridad: formData.get("claridad"),
+      interes: formData.get("interes"),
+      utilidad: formData.get("utilidad"),
+      nivel: formData.get("nivel"),
+      pregunta: formData.get("pregunta"),
+      sugerencia: formData.get("sugerencia"),
+      positivo: formData.get("positivo"),
+      mejora: formData.get("mejora")
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify(data)
+      });
+
+      form.reset();
+      successMessage.style.display = "block";
+
+    } catch (error) {
+      console.error("Error:", error);
+      errorMessage.style.display = "block";
+    }
+  });
+</script>
